@@ -1,5 +1,5 @@
 {
-  "name": "pitchify",
+  "name": "startups",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -24,7 +24,7 @@
     "easymde": "^2.18.0",
     "lucide-react": "^0.446.0",
     "markdown-it": "^14.1.0",
-    "next": "^15.0.0-canary.183",
+    "next": "^15.0.4-canary.47",
     "next-auth": "^5.0.0-beta.22",
     "next-sanity": "^9.5.1-canary.23",
     "react": "^19.0.0-rc-09111202-20241011",

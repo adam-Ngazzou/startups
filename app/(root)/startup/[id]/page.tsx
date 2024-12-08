@@ -5,7 +5,6 @@ import markdownit from "markdown-it";
 import { notFound } from "next/navigation";
 
 import { formatDate } from "@/lib/utils";
-
 import {
   STARTUP_BY_ID_QUERY,
   PLAYLIST_BY_SLUG_QUERY,
@@ -17,28 +16,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 import StartupCard, { StartupCardType } from "@/components/StartupCard";
 
 const md = markdownit();
-export const experimental_ppr = true;
 
-async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const id = (await params).id;
+async function Page({ params }: { params: { id: string } }) {
+  const { id } = params;
 
-  const [post, { select: editorPosts }] = await Promise.all([
-    client.fetch(STARTUP_BY_ID_QUERY, {
-      id: id,
-    }),
-    client.fetch(PLAYLIST_BY_SLUG_QUERY, {
-      slug: "editor-picks",
-    }),
+  const [post, editorPosts] = await Promise.all([
+    client.fetch(STARTUP_BY_ID_QUERY, { id }),
+    client.fetch(PLAYLIST_BY_SLUG_QUERY, { slug: "editor-picks" }),
   ]);
 
   if (!post) return notFound();
+
   const parsedContent = md.render(post?.pitch || "");
 
   return (
     <>
       <section className="pink_container !min-h-[230px]">
         <p className="tag">{formatDate(post._createdAt)}</p>
-
         <h1 className="heading">{post.title}</h1>
         <p className="sub-heading !max-w-5xl">{post.description}</p>
       </section>
@@ -63,7 +57,6 @@ async function Page({ params }: { params: Promise<{ id: string }> }) {
                 height={64}
                 className="rounded-full drop-shadow-lg"
               />
-
               <div>
                 <p className="text-20-medium">{post.author.name}</p>
                 <p className="text-16-medium !text-black-300">
@@ -91,7 +84,6 @@ async function Page({ params }: { params: Promise<{ id: string }> }) {
         {editorPosts?.length > 0 && (
           <div className="max-w-4xl mx-auto">
             <p className="text-30-semibold">Editor Picks</p>
-
             <ul className="mt-7 card_grid-sm">
               {editorPosts.map((post: StartupCardType, index: number) => (
                 <StartupCard key={index} post={post} />
