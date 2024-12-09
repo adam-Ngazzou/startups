@@ -41,7 +41,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
 
         // Extend the token with the GitHub profile id
-        token.id = user._id;
+        token.id = user?._id;
       }
       return token;
     },
