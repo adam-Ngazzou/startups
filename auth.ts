@@ -10,7 +10,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async signIn({ user, account, profile }) {
       // Check if the user exists in Sanity
-      const existingUser = await client.fetch(AUTHOR_BY_GITHUB_ID_QUERY, {
+      const existingUser = await client.withConfig({useCdn:false}).fetch(AUTHOR_BY_GITHUB_ID_QUERY, {
         id: profile?.id,
       });
 
@@ -36,7 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Add profile id to the JWT token on sign-in
       if (account && profile) {
         // get the user from sanity
-        const user = await client.fetch(AUTHOR_BY_GITHUB_ID_QUERY, {
+        const user = await client.withConfig({useCdn:false}).fetch(AUTHOR_BY_GITHUB_ID_QUERY, {
           id: profile?.id,
         });
 

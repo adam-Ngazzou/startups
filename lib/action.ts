@@ -1,15 +1,22 @@
 "use server";
 
 import { auth } from "@/auth";
-import slugify from "slugify";
-
-import { writeClient } from "@/sanity/lib/write-client";
 import { parseServerActionResponse } from "@/lib/utils";
+import slugify from "slugify";
+import { writeClient } from "@/sanity/lib/write-client";
 
-export const createIdea = async (state: any, form: FormData, pitch: string) => {
+export const createPitch = async (
+  state: any,
+  form: FormData,
+  pitch: string,
+) => {
   const session = await auth();
+
   if (!session)
-    parseServerActionResponse({ error: "Not signed in", status: "ERROR" });
+    return parseServerActionResponse({
+      error: "Not signed in",
+      status: "ERROR",
+    });
 
   const { title, description, category, link } = Object.fromEntries(
     Array.from(form).filter(([key]) => key !== "pitch"),
@@ -18,13 +25,13 @@ export const createIdea = async (state: any, form: FormData, pitch: string) => {
   const slug = slugify(title as string, { lower: true, strict: true });
 
   try {
-    const idea = {
+    const startup = {
       title,
       description,
       category,
       image: link,
       slug: {
-        _type: "slug",
+        _type: slug,
         current: slug,
       },
       author: {
@@ -34,7 +41,7 @@ export const createIdea = async (state: any, form: FormData, pitch: string) => {
       pitch,
     };
 
-    const result = await writeClient.create({ _type: "startup", ...idea });
+    const result = await writeClient.create({ _type: "startup", ...startup });
 
     return parseServerActionResponse({
       ...result,
@@ -42,10 +49,10 @@ export const createIdea = async (state: any, form: FormData, pitch: string) => {
       status: "SUCCESS",
     });
   } catch (error) {
-    console.log("Error", error);
+    console.log(error);
 
     return parseServerActionResponse({
-      error: JSON.stringify(error) || "Unknown error",
+      error: JSON.stringify(error),
       status: "ERROR",
     });
   }
